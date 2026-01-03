@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Mihrah B2B Wing</title>
+
+<style>
+body{margin:0;font-family:Arial;background:#eef2f7}
+
+/* HEADER */
+header{
+  background:#2c5364;
+  color:#fff;
+  padding:18px 15px;
+  text-align:center
+}
+.header-contact{
+  margin-top:6px;
+  font-size:15px;
+}
+.header-contact a{
+  color:#fff;
+  text-decoration:none;
+  margin:0 10px;
+  font-weight:bold;
+}
+.header-contact a:hover{
+  text-decoration:underline
+}
+
+/* CARDS */
+.cards{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:20px;
+  padding:30px;
+  max-width:1000px;
+  margin:auto
+}
+
+/* Base card */
+.card{
+  color:#fff;
+  padding:40px;
+  text-align:center;
+  font-size:22px;
+  font-weight:bold;
+  border-radius:15px;
+  cursor:pointer;
+}
+
+/* Card colors */
+.c1{background:#1abc9c}
+.c2{background:#3498db}
+.c3{background:#9b59b6}
+.c4{background:#e67e22}
+.c5{background:#e74c3c}
+.c6{background:#2ecc71}
+.c7{background:#34495e}
+
+.hidden{display:none}
+
+/* TABLE */
+.table-wrap{
+  width:92%;
+  margin:20px auto;
+  background:#fff;
+  border-radius:15px;
+  box-shadow:0 10px 25px rgba(0,0,0,.1);
+  overflow:hidden;
+}
+table{width:100%;border-collapse:collapse}
+th{
+  background:#34495e;
+  color:#fff;
+  padding:12px;
+  font-size:15px
+}
+td{
+  padding:12px;
+  text-align:center;
+  border-bottom:1px solid #eee
+}
+
+/* Badges */
+.badge{
+  padding:6px 14px;
+  border-radius:20px;
+  color:#fff;
+  font-size:14px;
+  font-weight:bold;
+  display:inline-block
+}
+.date{background:#9b59b6}
+.flight{background:#3498db}
+.baggage{background:#e67e22}
+.seats{background:#e74c3c}
+.fare{background:#2ecc71}
+
+tr:hover{background:#f7f9fb}
+
+/* Back button */
+.back{
+  margin:15px;
+  background:#2c5364;
+  color:#fff;
+  border:none;
+  padding:8px 18px;
+  border-radius:20px;
+  cursor:pointer
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h2>MIHRAH B2B WING</h2>
+  <div class="header-contact">
+    <a href="tel:8891951893">📞 Muneer – 8891951893</a>
+    |
+    <a href="https://wa.me/918891951893" target="_blank">🟢 WhatsApp</a>
+  </div>
+</header>
+
+<div id="home">
+  <div class="cards" id="cards"></div>
+</div>
+
+<div id="details" class="hidden">
+  <button class="back" onclick="goBack()">⬅ Back</button>
+  <h3 id="title" style="text-align:center"></h3>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Flight</th>
+          <th>Baggage</th>
+          <th>Seats</th>
+          <th>Fare</th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+function getData(){
+  return JSON.parse(localStorage.getItem("routes")) || {};
+}
+
+/* DATE FORMAT */
+function formatDate(d){
+  if(!d) return "";
+  const m=["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
+  const [y,mo,da]=d.split("-");
+  return da+" "+m[mo-1]+" "+y;
+}
+
+const cards=document.getElementById("cards");
+const rows=document.getElementById("rows");
+const details=document.getElementById("details");
+const home=document.getElementById("home");
+const title=document.getElementById("title");
+
+function loadCards(){
+  const data=getData();
+  cards.innerHTML="";
+  let i=0;
+  for(let r in data){
+    const c=document.createElement("div");
+    c.className="card c"+((i%7)+1);
+    c.innerText=r;
+    c.onclick=()=>openRoute(r);
+    cards.appendChild(c);
+    i++;
+  }
+}
+
+function openRoute(r){
+  const data=getData();
+  home.classList.add("hidden");
+  details.classList.remove("hidden");
+  title.innerText=r;
+  rows.innerHTML="";
+  data[r].forEach(p=>{
+    rows.innerHTML+=`
+    <tr>
+      <td><span class="badge date">${formatDate(p.date)}</span></td>
+      <td><span class="badge flight">${p.flight}</span></td>
+      <td><span class="badge baggage">${p.baggage}</span></td>
+      <td><span class="badge seats">${p.seats}</span></td>
+      <td><span class="badge fare">${p.fare}</span></td>
+    </tr>`;
+  });
+}
+
+function goBack(){
+  details.classList.add("hidden");
+  home.classList.remove("hidden");
+}
+
+loadCards();
+</script>
+
+</body>
+</html>
+
